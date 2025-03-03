@@ -1,6 +1,5 @@
 <?php
 require 'vendor/autoload.php';
-require 'logindata.php';
 use GuzzleHttp\Client;
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
@@ -23,5 +22,4 @@ $response = $client->post('https://accounts.spotify.com/api/token', [
 $body = json_decode($response->getBody(), true);
 $token = $body['access_token'];
 
-var_dump($token);
 ?>
