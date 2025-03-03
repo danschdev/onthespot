@@ -3,6 +3,12 @@ require 'vendor/autoload.php';
 require 'logindata.php';
 use GuzzleHttp\Client;
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+$clientId = $_ENV['SPOTIFY_CLIENT_ID'];
+$clientSecret = $_ENV['SPOTIFY_CLIENT_SECRET'];
+
 $client = new Client();
 $response = $client->post('https://accounts.spotify.com/api/token', [
     'form_params' => [
