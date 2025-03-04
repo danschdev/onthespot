@@ -10,7 +10,7 @@ $client = new Client();
 $headers = [
     'Authorization' => 'Bearer ' . $accesstoken
 ];
-
+/*
 $response = $client->request('GET', 
     'https://api.spotify.com/v1/tracks/69VKmxxZrMxIkccXvMNMhT',
     [
@@ -20,11 +20,11 @@ $response = $client->request('GET',
         ]);
 
 $song = json_decode($response->getBody());
-/*
+
 var_dump($song->name);
 var_dump($song->explicit);
 echo "<br/>";
-*/
+
 $response = $client->request('GET', 
     'https://api.spotify.com/v1/artists/'.$song->album->artists[0]->id,
     [
@@ -34,7 +34,7 @@ $response = $client->request('GET',
         ]);
 
 $artist = json_decode($response->getBody());
-
+*/
 $offset = 0;
 
 $response =  null;
@@ -64,21 +64,27 @@ do {
 
 } while ( 0 == sizeof($songs->items) || 99 <= sizeof($songs->items)) ;
 
+echo "<table style='borderwidth: 2px borderstyle: solid'>";
+foreach($trackitems as $item) {
+    echo "<tr><td>";
+    echo($item->track->name);
+    echo "</td>";
+    foreach($item->track->artists as $artist){
+        echo("<td>$artist->name</td>");
+    }
+    echo "</tr>";
+}
+echo "</table>";
+
+// Genres should be fetched later with an approach safer to Too Many Requests
+/*
 $artistids = [];
 $counter = 0;
 $batch = -1;
+define("BATCHSIZE", 10);
 
 foreach($trackitems as $plitem) {
-    /*
-    echo $plitem->track->name;
-    echo " - ";
-    echo $plitem->track->artists[0]->name;
-    echo " - ";
-    echo $plitem->track->artists[0]->id;
-    echo "<br/>";
-    */
-
-    if ($counter % 10 == 0) {
+    if ($counter % BATCHSIZE == 0) {
         $batch++;
         $artistids[$batch] = [];
     }
@@ -89,32 +95,37 @@ foreach($trackitems as $plitem) {
     $counter++; 
 }
 
-for ($i = 0; $i <= $batch; $i++ ) {
 
-$uri = "https://api.spotify.com/v1/artists?ids=".implode(',', $artistids[$batch]);
 
 echo "<table style=\"width:100%; border-width=1px\">";
-for ($i = 0; $i <= $batch; $i++) {
+for ($i = 0; $i <= $batch; $i++ ) {
 
-    $response = $client->request('GET', 
-    'https://api.spotify.com/v1/artists?ids='.implode(',', $artistids[$i]),
-    [
-        'headers' => [
-            'Authorization' => 'Bearer ' . $accesstoken,
-        ]
-        ]);
+    $uri = "https://api.spotify.com/v1/artists?ids=".implode(',', $artistids[$batch]);
 
-    $body = json_decode($response->getBody());
-    foreach($body->artists as $artist) {
-        echo "<tr><td>".$artist->name."</td>";
-        foreach($artist->genres as $genre) {
-            echo "<td>$genre</td>";
+    for ($i = 0; $i <= $batch; $i++) {
+
+        $response = $client->request('GET', 
+        'https://api.spotify.com/v1/artists?ids='.implode(',', $artistids[$i]),
+        [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $accesstoken,
+            ]
+            ]);
+
+        $body = json_decode($response->getBody());
+
+        foreach($body->artists as $artist) {
+            echo "<tr><td>".$artist->name."</td>";
+            foreach($artist->genres as $genre) {
+                echo "<td>$genre</td>";
+            }
+            echo "</tr>";
         }
-        echo "</tr>";
     }
 }
 echo "</table>";    
-}
+
+*/
 /*
 $genres = implode(', ', $artist->genres);
 $artists[$plitem->track->artists[0]->id] = [$plitem->track->artists[0]->name, $genres];
