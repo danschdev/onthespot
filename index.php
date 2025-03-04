@@ -39,7 +39,7 @@ $offset = 0;
 
 $response =  null;
 $artists = [];
-
+$trackitems = [];
 do {
 
     $response = $client->request('GET',
@@ -57,10 +57,18 @@ do {
 
     $offset += 100;
 
+    foreach($songs->items as $item) {
+        $trackitems[] = $item;
+    }
+    
+
 } while ( 0 == sizeof($songs->items) || 99 <= sizeof($songs->items)) ;
 
 $artistids = [];
-foreach($songs->items as $plitem) {
+$counter = 0;
+$batch = -1;
+
+foreach($trackitems as $plitem) {
     /*
     echo $plitem->track->name;
     echo " - ";
@@ -69,27 +77,44 @@ foreach($songs->items as $plitem) {
     echo $plitem->track->artists[0]->id;
     echo "<br/>";
     */
-    if (!in_array( $plitem->track->artists[0]->id, $artistids)){
-        $artistids[] = $plitem->track->artists[0]->id;
+
+    if ($counter % 10 == 0) {
+        $batch++;
+        $artistids[$batch] = [];
+    }
+    if (!in_array( $plitem->track->artists[0]->id, $artistids[$batch])){
+        $artistids[$batch][] = $plitem->track->artists[0]->id;
     }
 
+    $counter++; 
 }
 
-$uri = "https://api.spotify.com/v1/artists?ids=".implode(',', $artistids);
+for ($i = 0; $i <= $batch; $i++ ) {
 
+$uri = "https://api.spotify.com/v1/artists?ids=".implode(',', $artistids[$batch]);
 
-// echo $uri;
+for ($i = 0; $i <= $batch; $i++) {
 
-$response = $client->request('GET', 
-'https://api.spotify.com/v1/artists?ids='.implode(',', $artistids),
-[
-    'headers' => [
-        'Authorization' => 'Bearer ' . $accesstoken,
-    ]
-    ]);
+    $response = $client->request('GET', 
+    'https://api.spotify.com/v1/artists?ids='.implode(',', $artistids[$i]),
+    [
+        'headers' => [
+            'Authorization' => 'Bearer ' . $accesstoken,
+        ]
+        ]);
 
-$body = json_decode($response->getBody());
-
+    $body = json_decode($response->getBody());
+    echo "<table style=\"width:100%; border-width=1px\">";
+    foreach($body->artists as $artist) {
+        echo "<tr><td>".$artist->name."</td><td>";
+        foreach($artist->genres as $genre) {
+            echo "<td>$genre</td>";
+        }
+        echo "</tr>";
+    }
+    echo "</table>";    
+}
+}
 /*
 $genres = implode(', ', $artist->genres);
 $artists[$plitem->track->artists[0]->id] = [$plitem->track->artists[0]->name, $genres];
@@ -101,15 +126,7 @@ echo "<br/>";
 */
 
 
-echo "<table style=\"width:100%\">";
-foreach($body->artists as $artist) {
-    echo "<tr><td>".$artist->name."</td><td>";
-    foreach($artist->genres as $genre) {
-        echo "<td>$genre</td>";
-    }
-    echo "</tr>";
-}
-echo "</table>";    
+
 
 
 function accesstoken(): string {
