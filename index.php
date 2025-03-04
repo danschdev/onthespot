@@ -2,6 +2,7 @@
 require 'vendor/autoload.php';
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
 
 $accesstoken = accesstoken();
 
@@ -9,7 +10,7 @@ $client = new Client();
 $headers = [
     'Authorization' => 'Bearer ' . $accesstoken
 ];
-
+/*
 $response = $client->request('GET', 
     'https://api.spotify.com/v1/tracks/69VKmxxZrMxIkccXvMNMhT',
     [
@@ -33,10 +34,111 @@ $response = $client->request('GET',
         ]);
 
 $artist = json_decode($response->getBody());
+*/
+$offset = 0;
 
-foreach($artist->genres as $genre) {
-    var_dump($genre);
-}  
+$response =  null;
+$artists = [];
+$trackitems = [];
+do {
+
+    $response = $client->request('GET',
+    'https://api.spotify.com/v1/playlists/'
+        .'5b6HY4TAenULF8SHFdw2nn'
+        ."/tracks?offset=$offset&limit=100",
+        [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $accesstoken
+            ]
+        ]
+    );
+
+    $songs = json_decode($response->getBody());
+
+    $offset += 100;
+
+    foreach($songs->items as $item) {
+        $trackitems[] = $item;
+    }
+    
+
+} while ( 0 == sizeof($songs->items) || 99 <= sizeof($songs->items)) ;
+
+echo "<table style='borderwidth: 2px borderstyle: solid'>";
+foreach($trackitems as $item) {
+    echo "<tr><td>";
+    echo($item->track->name);
+    echo "</td>";
+    foreach($item->track->artists as $artist){
+        echo("<td>$artist->name</td>");
+    }
+    echo "</tr>";
+}
+echo "</table>";
+
+// Genres should be fetched later with an approach safer to Too Many Requests
+/*
+$artistids = [];
+$counter = 0;
+$batch = -1;
+define("BATCHSIZE", 10);
+
+foreach($trackitems as $plitem) {
+    if ($counter % BATCHSIZE == 0) {
+        $batch++;
+        $artistids[$batch] = [];
+    }
+    if (!in_array( $plitem->track->artists[0]->id, $artistids[$batch])){
+        $artistids[$batch][] = $plitem->track->artists[0]->id;
+    }
+
+    $counter++; 
+}
+
+
+
+echo "<table style=\"width:100%; border-width=1px\">";
+for ($i = 0; $i <= $batch; $i++ ) {
+
+    $uri = "https://api.spotify.com/v1/artists?ids=".implode(',', $artistids[$batch]);
+
+    for ($i = 0; $i <= $batch; $i++) {
+
+        $response = $client->request('GET', 
+        'https://api.spotify.com/v1/artists?ids='.implode(',', $artistids[$i]),
+        [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $accesstoken,
+            ]
+            ]);
+
+        $body = json_decode($response->getBody());
+
+        foreach($body->artists as $artist) {
+            echo "<tr><td>".$artist->name."</td>";
+            foreach($artist->genres as $genre) {
+                echo "<td>$genre</td>";
+            }
+            echo "</tr>";
+        }
+    }
+}
+echo "</table>";    
+
+*/
+/*
+$genres = implode(', ', $artist->genres);
+$artists[$plitem->track->artists[0]->id] = [$plitem->track->artists[0]->name, $genres];
+/*
+    echo($artists[$plitem->track->artists[0]->id][1]);
+
+echo "<br/>";
+
+*/
+
+
+
+
 
 function accesstoken(): string {
     $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
