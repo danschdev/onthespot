@@ -68,6 +68,7 @@ echo "<table style='borderwidth: 2px borderstyle: solid'>";
 foreach($trackitems as $item) {
     echo "<tr>";
         echo "<td>";
+            if ($item->track->explicit) { echo "&#x26A0; ";};
             echo($item->track->name);
         echo "</td>";
         echo "<td>";
