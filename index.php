@@ -46,6 +46,7 @@ $response = $client->request('GET',
     );
 
     $songs = json_decode($response->getBody());
+    $artists = [];
     foreach($songs->items as $plitem) {
         echo $plitem->track->name;
         echo " - ";
@@ -54,7 +55,7 @@ $response = $client->request('GET',
         echo $plitem->track->artists[0]->id;
         echo "<br/>";
 
-            // var_dump($plitem->track->artists[0]);
+        if (!array_key_exists($plitem->track->artists[0]->id, $artists)){
 
             $response = $client->request('GET', 
             'https://api.spotify.com/v1/artists/'.$plitem->track->artists[0]->id,
@@ -64,14 +65,19 @@ $response = $client->request('GET',
                 ]
                 ]);
         
-        $artist = json_decode($response->getBody());
+            $artist = json_decode($response->getBody());
         
 
-        $genres = implode(', ', $artist->genres);
-            echo($genres);
+            $genres = implode(', ', $artist->genres);
+            $artists[$plitem->track->artists[0]->id] = [$plitem->track->artists[0]->name, $genres];
+        }
+            // var_dump($plitem->track->artists[0]);
+
+            echo($artists[$plitem->track->artists[0]->id][1]);
 
         echo "<br/>";
     }
+    var_dump($artists);
 
 function accesstoken(): string {
     $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
