@@ -37,7 +37,7 @@ do {
 
 } while ( 0 == sizeof($songs->items) || 99 <= sizeof($songs->items)) ;
 
-echo "<table style='borderwidth: 2px borderstyle: solid'>";
+echo "<table style='borderwidth: 2px borderstyle: solid'>\n";
 foreach($trackitems as $item) {
     echo "<tr><td>";
     echo($item->track->name);
@@ -45,7 +45,7 @@ foreach($trackitems as $item) {
     foreach($item->track->artists as $artist){
         echo("<td>$artist->name</td>");
     }
-    echo "</tr>";
+    echo "</tr>\n";
 }
 echo "</table>";
 
