@@ -93,6 +93,7 @@ for ($i = 0; $i <= $batch; $i++ ) {
 
 $uri = "https://api.spotify.com/v1/artists?ids=".implode(',', $artistids[$batch]);
 
+echo "<table style=\"width:100%; border-width=1px\">";
 for ($i = 0; $i <= $batch; $i++) {
 
     $response = $client->request('GET', 
@@ -104,16 +105,15 @@ for ($i = 0; $i <= $batch; $i++) {
         ]);
 
     $body = json_decode($response->getBody());
-    echo "<table style=\"width:100%; border-width=1px\">";
     foreach($body->artists as $artist) {
-        echo "<tr><td>".$artist->name."</td><td>";
+        echo "<tr><td>".$artist->name."</td>";
         foreach($artist->genres as $genre) {
             echo "<td>$genre</td>";
         }
         echo "</tr>";
     }
-    echo "</table>";    
 }
+echo "</table>";    
 }
 /*
 $genres = implode(', ', $artist->genres);
