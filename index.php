@@ -1,12 +1,10 @@
 <?php
 require 'vendor/autoload.php';
 use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Response;
-
-$accesstoken = accesstoken();
 
 $client = new Client();
+$accesstoken = accesstoken($client);
+
 $headers = [
     'Authorization' => 'Bearer ' . $accesstoken
 ];
@@ -51,14 +49,13 @@ foreach($trackitems as $item) {
 }
 echo "</table>";
 
-function accesstoken(): string {
+function accesstoken(Client $client): string {
     $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
     $dotenv->load();
     
     $clientId = $_ENV['SPOTIFY_CLIENT_ID'];
     $clientSecret = $_ENV['SPOTIFY_CLIENT_SECRET'];
     
-    $client = new Client();
     $response = $client->post('https://accounts.spotify.com/api/token', [
         'form_params' => [
             'grant_type' => 'client_credentials'
