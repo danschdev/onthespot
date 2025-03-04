@@ -44,7 +44,7 @@ do {
 
     $response = $client->request('GET',
     'https://api.spotify.com/v1/playlists/'
-        .'5b6HY4TAenULF8SHFdw2nn'
+        .$_ENV['PLAYLIST_ID']
         ."/tracks?offset=$offset&limit=100",
         [
             'headers' => [
@@ -66,12 +66,22 @@ do {
 
 echo "<table style='borderwidth: 2px borderstyle: solid'>";
 foreach($trackitems as $item) {
-    echo "<tr><td>";
-    echo($item->track->name);
-    echo "</td>";
-    foreach($item->track->artists as $artist){
-        echo("<td>$artist->name</td>");
-    }
+    echo "<tr>";
+        echo "<td>";
+            echo($item->track->name);
+        echo "</td>";
+        echo "<td>";
+            echo($item->track->artists[0]->name);
+        echo "</td>";
+        echo "<td><img src='";
+            echo($item->track->album->images[2]->url);
+        echo "'></td>";
+        echo "<td>";
+            echo($item->track->album->name);
+        echo "</td>";
+        foreach (array_slice($item->track->artists, 1) as $artist) {
+            echo("<td>$artist->name</td>");
+        }
     echo "</tr>";
 }
 echo "</table>";
