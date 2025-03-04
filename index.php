@@ -19,11 +19,11 @@ $response = $client->request('GET',
         ]);
 
 $song = json_decode($response->getBody());
-
+/*
 var_dump($song->name);
 var_dump($song->explicit);
 echo "<br/>";
-
+*/
 $response = $client->request('GET', 
     'https://api.spotify.com/v1/artists/'.$song->album->artists[0]->id,
     [
@@ -34,9 +34,44 @@ $response = $client->request('GET',
 
 $artist = json_decode($response->getBody());
 
-foreach($artist->genres as $genre) {
-    var_dump($genre);
-}  
+$response = $client->request('GET',
+    'https://api.spotify.com/v1/playlists/'
+        .'5b6HY4TAenULF8SHFdw2nn'
+        .'/tracks?offset=0&limit=100',
+        [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $accesstoken
+            ]
+        ]
+    );
+
+    $songs = json_decode($response->getBody());
+    foreach($songs->items as $plitem) {
+        echo $plitem->track->name;
+        echo " - ";
+        echo $plitem->track->artists[0]->name;
+        echo " - ";
+        echo $plitem->track->artists[0]->id;
+        echo "<br/>";
+
+            // var_dump($plitem->track->artists[0]);
+
+            $response = $client->request('GET', 
+            'https://api.spotify.com/v1/artists/'.$plitem->track->artists[0]->id,
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accesstoken
+                ]
+                ]);
+        
+        $artist = json_decode($response->getBody());
+        
+
+        $genres = implode(', ', $artist->genres);
+            echo($genres);
+
+        echo "<br/>";
+    }
 
 function accesstoken(): string {
     $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
