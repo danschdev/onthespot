@@ -43,7 +43,7 @@ do {
             }
         }
     }
-} while ( 0 == sizeof($songs->items) || 99 <= sizeof($songs->items)) ;
+} while ( 0 == sizeof($songs->items) || 99 <= sizeof($songs->items)) ; // Delete first condition? Loop will be run >= 1 time anyway. Test with exactly 100 tracks!
 
 uasort($artists, function($a, $b) {
     return $a["count"] < $b["count"] ? 1 : -1;
