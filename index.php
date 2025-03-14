@@ -50,9 +50,15 @@ uasort($artists, function($a, $b) {
     return $a["count"] < $b["count"] ? 1 : -1;
 });
 
-foreach($artists as $artist) {
+foreach($artists as $key => $artist) {
     echo $artist["name"].": ".$artist["count"];
     echo "<br/>";
+    $sql = "INSERT INTO artists
+        (ID, name)
+        VALUES ('$key', '".$artist["name"]."')
+        ON DUPLICATE KEY UPDATE name = '".$artist["name"]."';";
+    echo $sql;
+    $db->exec($sql);
 }
 
 echo "<table style='borderwidth: 2px borderstyle: solid'>\n";
