@@ -55,10 +55,9 @@ foreach($artists as $key => $artist) {
     echo "<br/>";
     $sql = "INSERT INTO artists
         (ID, name)
-        VALUES ('$key', '".$artist["name"]."')
-        ON DUPLICATE KEY UPDATE name = '".$artist["name"]."';";
-    echo $sql;
-    $db->exec($sql);
+        VALUES (?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name);";
+    $stmt = $db->prepare($sql);
+    $stmt->execute([$key, $artist["name"]]);
 }
 
 echo "<table style='borderwidth: 2px borderstyle: solid'>\n";
