@@ -1,5 +1,6 @@
 <?php
 require 'vendor/autoload.php';
+require 'database.php';
 use GuzzleHttp\Client;
 
 $client = new Client();
@@ -48,7 +49,6 @@ do {
 uasort($artists, function($a, $b) {
     return $a["count"] < $b["count"] ? 1 : -1;
 });
-
 
 foreach($artists as $artist) {
     echo $artist["name"].": ".$artist["count"];
