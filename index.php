@@ -1,5 +1,6 @@
 <?php
 require 'vendor/autoload.php';
+require 'database.php';
 use GuzzleHttp\Client;
 
 $client = new Client();
@@ -32,10 +33,32 @@ do {
 
     foreach($songs->items as $item) {
         $trackitems[] = $item;
+        foreach($item->track->artists as $artist) {
+            if (key_exists($artist->id, $artists) && key_exists("count", $artists[$artist->id])) {
+                $artists[$artist->id]["count"] += 1;
+                $artists[$artist->id]["name"] = $artist->name;
+            } else {
+                $artists[$artist->id] = [];
+                $artists[$artist->id]["name"] = $artist->name;
+                $artists[$artist->id]["count"] = 1;
+            }
+        }
     }
-    
+} while ( 0 == sizeof($songs->items) || 99 <= sizeof($songs->items)) ; // Delete first condition? Loop will be run >= 1 time anyway. Test with exactly 100 tracks!
 
-} while ( 0 == sizeof($songs->items) || 99 <= sizeof($songs->items)) ;
+uasort($artists, function($a, $b) {
+    return $a["count"] < $b["count"] ? 1 : -1;
+});
+
+foreach($artists as $key => $artist) {
+    echo $artist["name"].": ".$artist["count"];
+    echo "<br/>";
+    $sql = "INSERT INTO artists
+        (ID, name)
+        VALUES (?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name);";
+    $stmt = $db->prepare($sql);
+    $stmt->execute([$key, $artist["name"]]);
+}
 
 echo "<table style='borderwidth: 2px borderstyle: solid'>\n";
 foreach($trackitems as $item) {
