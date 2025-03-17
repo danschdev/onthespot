@@ -7,6 +7,13 @@ use GuzzleHttp\Client;
 $client = new Client();
 $accesstoken = accesstoken($client);
 
+try {
+    $db = getDatabaseConnection();
+} catch (RuntimeException $e) {
+    echo 'Fehler: ' . $e->getMessage();
+    $db = null;
+}
+
 $headers = [
     'Authorization' => 'Bearer ' . $accesstoken
 ];
