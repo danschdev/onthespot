@@ -19,4 +19,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: PHP-CS-Fixer
-      uses: docker://oskarstar/php-cs-fixer-ga
+      uses: docker://oskarstark/php-cs-fixer-ga
