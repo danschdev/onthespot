@@ -13,3 +13,10 @@ jobs:
       with:
         path: src/
         level: 6
+  cs-fixer:
+    name: PHP-CS-Fixer
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: PHP-CS-Fixer
+      uses: docker://oskarstar/php-cs-fixer-ga
