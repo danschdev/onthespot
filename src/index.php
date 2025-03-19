@@ -96,7 +96,7 @@ echo "</table>";
 
 function accesstoken(Client $client): string
 {
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__."\..");
     $dotenv->load();
 
     $clientId = $_ENV['SPOTIFY_CLIENT_ID'];
