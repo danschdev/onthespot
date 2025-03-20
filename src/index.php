@@ -8,7 +8,7 @@ $client = new Client();
 $accesstoken = accesstoken($client);
 
 try {
-    $db = null;
+    $db = getDatabaseConnection();
 } catch (RuntimeException $e) {
     echo 'Fehler: ' . $e->getMessage();
     $db = null;
