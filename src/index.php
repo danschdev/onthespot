@@ -4,11 +4,11 @@ require '../vendor/autoload.php';
 require 'database.php';
 use GuzzleHttp\Client;
 
-$client = new  Client();
+$client = new Client();
 $accesstoken = accesstoken($client);
 
 try {
-    $db = getDatabaseConnection();
+    $db = null;
 } catch (RuntimeException $e) {
     echo 'Fehler: ' . $e->getMessage();
     $db = null;
