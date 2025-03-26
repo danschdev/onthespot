@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 function getDatabaseConnection(): ?PDO
 {
     try {
@@ -9,9 +11,11 @@ function getDatabaseConnection(): ?PDO
             ''
         );
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
         return $db;
     } catch (PDOException $exception) {
         echo 'Konnte Verbindung nicht erstellen: '.$exception->getMessage();
+
         return null;
     }
 }
