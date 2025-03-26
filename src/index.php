@@ -5,6 +5,7 @@ declare(strict_types=1);
 require '../vendor/autoload.php';
 
 require 'database.php';
+
 require 'spotifyApi.php';
 
 use GuzzleHttp\Client;
