@@ -38,7 +38,7 @@ do {
         ]
     );
 
-    $songs = json_decode($response->getBody());
+    $songs = json_decode($response->getBody()->__toString());
 
     $offset += 100;
 
@@ -96,7 +96,7 @@ echo '</table>';
 
 function accesstoken(Client $client): string
 {
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'\\..');
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'\..');
     $dotenv->load();
 
     $clientId = $_ENV['SPOTIFY_CLIENT_ID'];
@@ -112,7 +112,7 @@ function accesstoken(Client $client): string
         ],
     ]);
 
-    $body = json_decode($response->getBody(), true);
+    $body = json_decode($response->getBody()->__toString(), true);
 
     return $body['access_token'];
 }
