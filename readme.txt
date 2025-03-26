@@ -13,4 +13,4 @@ To run a specific command from the makefile, use
 & 'C:\Program Files (x86)\GnuWin32\bin\make' codestyle
 
 To run a test file, use
-php vendor/bin/phpunit src/tests/databaseTest.php
+php vendor/bin/phpunit src/tests/connectionTest.php
