@@ -9,7 +9,6 @@ require_once __DIR__.'/../database.php';
 
 require_once __DIR__.'/../spotifyApi.php';
 
-#[\PHPUnit\Framework\Attributes\CoversNothing]
 final class connectionTest extends TestCase
 {
     public function testDatabaseConnection(): void
