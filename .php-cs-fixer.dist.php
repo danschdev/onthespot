@@ -41,6 +41,8 @@ return (new Config())
         'modernize_strpos' => true, // needs PHP 8+ or polyfill
         'no_useless_concat_operator' => false, // TODO switch back on when the `src/Console/Application.php` no longer needs the concat
         'numeric_literal_separator' => true,
+        'php_unit_internal_class' => false, // Verhindert @internal für PHPUnit-Klassen
+        'php_unit_test_class_requires_covers' => false, // Verhindert @coversNothing in Testklassen
     ])
     ->setFinder(
         (new Finder())
