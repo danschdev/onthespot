@@ -14,9 +14,15 @@ $client = new Client();
 $spotifyApi = new SpotifyApi($client);
 $accessToken = $spotifyApi->createAccesstoken();
 
-$database = new DatabaseConnection();
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'\..');
+$dotenv->load();
+
+$dsn = $_ENV['DATABASE_DSN'];
+$databaseUser = $_ENV['DATABASE_USER'];
+$databasePassword = $_ENV['DATABASE_PASSWORD'];
 
 try {
+    $database = new DatabaseConnection($dsn, $databaseUser, $databasePassword);
     $pdo = $database->getPdo();
 } catch (RuntimeException $e) {
     echo 'Fehler: '.$e->getMessage();

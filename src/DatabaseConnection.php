@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 class DatabaseConnection
 {
-    public function getPdo(): ?PDO
+    private PDO $pdo;
+
+    public function __construct(string $dsn, string $user, string $password)
     {
         try {
-            $db = new PDO(
-                'mysql:host=localhost;dbname=onthespot;charset=utf8mb4',
-                'root',
-                ''
-            );
-            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            return $db;
+            $this->pdo = new PDO($dsn, $user, $password, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            ]);
         } catch (PDOException $exception) {
-            echo 'Konnte Verbindung nicht erstellen: '.$exception->getMessage();
-
-            return null;
+            throw new RuntimeException('Konnte Datenbankverbindung nicht erstellen: '.$exception->getMessage());
         }
+    }
+
+    public function getPdo(): ?PDO
+    {
+        return $this->pdo;
     }
 }
