@@ -4,24 +4,33 @@ declare(strict_types=1);
 
 require '../vendor/autoload.php';
 
-require 'database.php';
+require 'DatabaseConnection.php';
 
-require 'spotifyApi.php';
+require 'SpotifyApi.php';
 
 use GuzzleHttp\Client;
 
 $client = new Client();
-$accesstoken = accesstoken($client);
+$spotifyApi = new SpotifyApi($client);
+$accessToken = $spotifyApi->createAccesstoken();
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'\..');
+$dotenv->load();
+
+$dsn = $_ENV['DATABASE_DSN'];
+$databaseUser = $_ENV['DATABASE_USER'];
+$databasePassword = $_ENV['DATABASE_PASSWORD'];
 
 try {
-    $db = getDatabaseConnection();
+    $database = new DatabaseConnection($dsn, $databaseUser, $databasePassword);
+    $pdo = $database->getPdo();
 } catch (RuntimeException $e) {
     echo 'Fehler: '.$e->getMessage();
-    $db = null;
+    $pdo = null;
 }
 
 $headers = [
-    'Authorization' => 'Bearer '.$accesstoken,
+    'Authorization' => 'Bearer '.$accessToken,
 ];
 $offset = 0;
 
@@ -36,7 +45,7 @@ do {
         ."/tracks?offset={$offset}&limit=100",
         [
             'headers' => [
-                'Authorization' => 'Bearer '.$accesstoken,
+                'Authorization' => 'Bearer '.$accessToken,
             ],
         ]
     );
@@ -68,7 +77,7 @@ foreach ($artists as $key => $artist) {
     $sql = 'INSERT INTO artists
         (ID, name)
         VALUES (?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name);';
-    $stmt = $db->prepare($sql);
+    $stmt = $pdo->prepare($sql);
     $stmt->execute([$key, $artist['name']]);
 }
 
