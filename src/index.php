@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 require '../vendor/autoload.php';
 
-require 'Database.php';
+require 'DatabaseConnection.php';
 
-require 'spotifyApi.php';
+require 'SpotifyApi.php';
 
 use GuzzleHttp\Client;
 
@@ -14,7 +14,7 @@ $client = new Client();
 $spotifyApi = new SpotifyApi($client);
 $accessToken = $spotifyApi->createAccesstoken();
 
-$database = new Database();
+$database = new DatabaseConnection();
 
 try {
     $pdo = $database->getPdo();
