@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use GuzzleHttp\Client;
 use PHPUnit\Framework\TestCase;
 
 require_once __DIR__.'/../Database.php';
@@ -20,7 +21,8 @@ final class connectionTest extends TestCase
 
     public function testSpotifyApiToken(): void
     {
-        $spotifyApi = new SpotifyApi();
+        $client = new Client();
+        $spotifyApi = new SpotifyApi($client);
         $token = $spotifyApi->createAccessToken();
         self::assertNotEmpty($token);
     }

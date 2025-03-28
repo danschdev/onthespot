@@ -11,7 +11,8 @@ require 'spotifyApi.php';
 use GuzzleHttp\Client;
 
 $client = new Client();
-$accesstoken = accesstoken($client);
+$spotifyApi = new SpotifyApi($client);
+$accessToken = $spotifyApi->createAccesstoken();
 
 $database = new Database();
 
@@ -23,7 +24,7 @@ try {
 }
 
 $headers = [
-    'Authorization' => 'Bearer '.$accesstoken,
+    'Authorization' => 'Bearer '.$accessToken,
 ];
 $offset = 0;
 
@@ -38,7 +39,7 @@ do {
         ."/tracks?offset={$offset}&limit=100",
         [
             'headers' => [
-                'Authorization' => 'Bearer '.$accesstoken,
+                'Authorization' => 'Bearer '.$accessToken,
             ],
         ]
     );
