@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 
-require_once __DIR__.'/../database.php';
+require_once __DIR__.'/../Database.php';
 
 require_once __DIR__.'/../spotifyApi.php';
 

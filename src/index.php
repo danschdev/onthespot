@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require '../vendor/autoload.php';
 
-require 'database.php';
+require 'Database.php';
 
 require 'spotifyApi.php';
 
@@ -13,11 +13,13 @@ use GuzzleHttp\Client;
 $client = new Client();
 $accesstoken = accesstoken($client);
 
+$database = new Database();
+
 try {
-    $db = getDatabaseConnection();
+    $pdo = $database->getPdo();
 } catch (RuntimeException $e) {
     echo 'Fehler: '.$e->getMessage();
-    $db = null;
+    $pdo = null;
 }
 
 $headers = [
@@ -68,7 +70,7 @@ foreach ($artists as $key => $artist) {
     $sql = 'INSERT INTO artists
         (ID, name)
         VALUES (?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name);';
-    $stmt = $db->prepare($sql);
+    $stmt = $pdo->prepare($sql);
     $stmt->execute([$key, $artist['name']]);
 }
 
