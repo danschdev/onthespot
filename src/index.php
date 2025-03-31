@@ -6,6 +6,7 @@ require '../vendor/autoload.php';
 require 'ConfigLoader.php';
 require 'DatabaseConnection.php';
 require 'SpotifyApi.php';
+require 'SpotifyPlaylistFetcher.php';
 
 use GuzzleHttp\Client;
 
@@ -36,37 +37,13 @@ $offset = 0;
 $response = null;
 $artists = [];
 $trackitems = [];
-do {
-    $response = $client->request(
-        'GET',
-        'https://api.spotify.com/v1/playlists/'
-        .$_ENV['PLAYLIST_ID']
-        ."/tracks?offset={$offset}&limit=100",
-        [
-            'headers' => [
-                'Authorization' => 'Bearer '.$accessToken,
-            ],
-        ]
-    );
 
-    $songs = json_decode($response->getBody()->__toString());
+$playlistFetcher = new SpotifyPlaylistFetcher($client, $accessToken);
 
-    $offset += 100;
+$data = $playlistFetcher->fetchTracks($_ENV['PLAYLIST_ID']);
 
-    foreach ($songs->items as $item) {
-        $trackitems[] = $item;
-        foreach ($item->track->artists as $artist) {
-            if (array_key_exists($artist->id, $artists) && array_key_exists('count', $artists[$artist->id])) {
-                ++$artists[$artist->id]['count'];
-                $artists[$artist->id]['name'] = $artist->name;
-            } else {
-                $artists[$artist->id] = [];
-                $artists[$artist->id]['name'] = $artist->name;
-                $artists[$artist->id]['count'] = 1;
-            }
-        }
-    }
-} while (0 === count($songs->items) || 99 <= count($songs->items)); // Delete first condition? Loop will be run >= 1 time anyway. Test with exactly 100 tracks!
+$artists = $data['artists'];
+$trackitems = $data['tracks'];
 
 uasort($artists, static fn ($a, $b) => $a['count'] < $b['count'] ? 1 : -1);
 
