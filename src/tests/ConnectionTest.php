@@ -33,4 +33,15 @@ final class ConnectionTest extends TestCase
         $token = $spotifyApi->createAccessToken();
         self::assertNotEmpty($token);
     }
+
+    public function testSpotifyPlaylistFetcher(): void
+    {
+        $client = new Client();
+        $spotifyApi = new SpotifyApi($client);
+        $token = $spotifyApi->createAccessToken();
+        $playlistFetcher = new SpotifyPlaylistFetcher($client, $accessToken);
+        $data = $playlistFetcher->fetchTracks($_ENV['PLAYLIST_ID']);
+        self::assertNotEmpty($data['artists']);
+        self::assertNotEmpty($data['tracks']);
+    }
 }
