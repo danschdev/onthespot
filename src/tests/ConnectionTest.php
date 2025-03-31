@@ -9,6 +9,8 @@ require_once __DIR__.'/../DatabaseConnection.php';
 
 require_once __DIR__.'/../SpotifyApi.php';
 
+require_once __DIR__.'/../SpotifyPlaylistFetcher.php';
+
 final class ConnectionTest extends TestCase
 {
     public function testDatabaseConnection(): void
@@ -36,11 +38,16 @@ final class ConnectionTest extends TestCase
 
     public function testSpotifyPlaylistFetcher(): void
     {
+        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'\..\..');
+        $dotenv->load();
+
         $client = new Client();
         $spotifyApi = new SpotifyApi($client);
-        $token = $spotifyApi->createAccessToken();
+        $accessToken = $spotifyApi->createAccessToken();
         $playlistFetcher = new SpotifyPlaylistFetcher($client, $accessToken);
+
         $data = $playlistFetcher->fetchTracks($_ENV['PLAYLIST_ID']);
+
         self::assertNotEmpty($data['artists']);
         self::assertNotEmpty($data['tracks']);
     }
