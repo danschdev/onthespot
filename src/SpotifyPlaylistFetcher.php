@@ -20,7 +20,7 @@ class SpotifyPlaylistFetcher{
             $response = $this->client->request(
                 'GET',
                 'https://api.spotify.com/v1/playlists/'
-                .$_ENV['PLAYLIST_ID']
+                .$playlistId
                 ."/tracks?offset={$offset}&limit=100",
                 [
                     'headers' => [
