@@ -3,9 +3,8 @@
 declare(strict_types=1);
 
 require '../vendor/autoload.php';
-
+require 'ConfigLoader.php';
 require 'DatabaseConnection.php';
-
 require 'SpotifyApi.php';
 
 use GuzzleHttp\Client;
@@ -14,8 +13,8 @@ $client = new Client();
 $spotifyApi = new SpotifyApi($client);
 $accessToken = $spotifyApi->createAccesstoken();
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'\..');
-$dotenv->load();
+$configLoader = new ConfigLoader();
+$configLoader->load();
 
 $dsn = $_ENV['DATABASE_DSN'];
 $databaseUser = $_ENV['DATABASE_USER'];
