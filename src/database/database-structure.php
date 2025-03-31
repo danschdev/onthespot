@@ -32,14 +32,13 @@ $sql = 'CREATE TABLE IF NOT EXISTS `artists` (
 $stmt = $pdo->prepare($sql);
 $stmt->execute([]);
 
-$sql = 'ALTER TABLE `artists`
-  ADD PRIMARY KEY (`ID`)
-  WHERE NOT EXISTS (
-    SELECT 1 FROM information_schema.table_constraints
-    WHERE table_name = `artists`
-    AND constraint_type = `PRIMARY KEY`
-  );
-COMMIT;';
+
+$sql = 'CREATE TABLE IF NOT EXISTS `spotify_tokens` (
+  `token` varchar(255) NOT NULL,
+  `expires_at` timestamp NOT NULL,
+  UNIQUE (`token`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+';
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute([]);
