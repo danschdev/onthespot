@@ -33,7 +33,12 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute([]);
 
 $sql = 'ALTER TABLE `artists`
-  ADD PRIMARY KEY (`ID`);
+  ADD PRIMARY KEY (`ID`)
+  WHERE NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE table_name = `artists`
+    AND constraint_type = `PRIMARY KEY`
+  );
 COMMIT;';
 
 $stmt = $pdo->prepare($sql);
