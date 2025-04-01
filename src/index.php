@@ -10,10 +10,6 @@ require 'SpotifyPlaylistFetcher.php';
 
 use GuzzleHttp\Client;
 
-$client = new Client();
-$spotifyApi = new SpotifyApi($client);
-$accessToken = $spotifyApi->createAccesstoken();
-
 $configLoader = new ConfigLoader();
 $configLoader->load();
 
@@ -28,6 +24,12 @@ try {
     echo 'Fehler: '.$e->getMessage();
     $pdo = null;
 }
+
+$spotifyRepository = new SpotifyRepository($database);
+$client = new Client();
+$spotifyApi = new SpotifyApi($client, $database, $spotifyRepository);
+
+$accessToken = $spotifyRepository->getLatestAccessToken() ?? $spotifyApi->createAccesstoken();
 
 $headers = [
     'Authorization' => 'Bearer '.$accessToken,

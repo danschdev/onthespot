@@ -10,12 +10,13 @@ class SpotifyRepository {
         $this->pdo = $databaseConnection->getPdo();
     }
 
-    public function saveAccessToken(string $accessToken, int $expiresAt): void
+    public function saveAccessToken(string $accessToken, DateTime $expiresAt): void
     {
+        $formattedDate = $expiresAt->format('Y-m-d H:i:s');
         $stmt = $this->pdo->prepare("INSERT INTO spotify_tokens (token, expires_at) VALUES (:token, :expiresAt)");
         $stmt->execute([
             'token' => $accessToken,
-            'expiresAt' => $expiresAt,
+            'expiresAt' => $formattedDate,
         ]);
     }
 
