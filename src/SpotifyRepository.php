@@ -22,7 +22,9 @@ class SpotifyRepository {
 
     public function getLatestAccessToken(): ?string
     {
-        $stmt = $this->pdo->query('SELECT token FROM spotify_tokens ORDER BY expires_at DESC LIMIT 1');
+        $now = (new DateTime())->format('Y-m-d H:i:s');
+        $stmt = $this->pdo->prepare("SELECT token FROM spotify_tokens WHERE expires_at > :now ORDER BY expires_at DESC LIMIT 1");
+        $stmt->execute(['now' => $now]);
         return $stmt->fetchColumn() ?: null;
     }
 }
