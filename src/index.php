@@ -27,7 +27,7 @@ try {
 
 $spotifyRepository = new SpotifyRepository($database);
 $client = new Client();
-$spotifyApi = new SpotifyApi($client, $database, $spotifyRepository);
+$spotifyApi = new SpotifyApi($client, $spotifyRepository);
 
 $accessToken = $spotifyRepository->getLatestAccessToken() ?? $spotifyApi->createAccesstoken();
 
