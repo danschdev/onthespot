@@ -3,9 +3,13 @@
 declare(strict_types=1);
 
 require '../vendor/autoload.php';
+
 require 'ConfigLoader.php';
+
 require 'DatabaseConnection.php';
+
 require 'SpotifyApi.php';
+
 require 'SpotifyPlaylistFetcher.php';
 
 use GuzzleHttp\Client;

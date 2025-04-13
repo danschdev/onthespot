@@ -32,7 +32,6 @@ $sql = 'CREATE TABLE IF NOT EXISTS `artists` (
 $stmt = $pdo->prepare($sql);
 $stmt->execute([]);
 
-
 $sql = 'CREATE TABLE IF NOT EXISTS `spotify_tokens` (
   `token` varchar(255) NOT NULL,
   `expires_at` timestamp NOT NULL,
