@@ -39,7 +39,9 @@ class SpotifyApi
         $body = json_decode($response->getBody()->__toString(), true);
         $token = $body['access_token'];
 
-        $this->spotifyRepository->saveAccessToken($token, new DateTime('1 hour'));
+        if ($this->spotifyRepository) {
+            $this->spotifyRepository->saveAccessToken($token, new DateTime('1 hour'));
+        }
 
         return $body['access_token'];
     }
