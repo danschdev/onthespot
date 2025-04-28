@@ -4,72 +4,60 @@ declare(strict_types=1);
 
 require '../vendor/autoload.php';
 
-require 'database.php';
+require 'ConfigLoader.php';
 
-require 'spotifyApi.php';
+require 'DatabaseConnection.php';
+
+require 'SpotifyApi.php';
+
+require 'SpotifyPlaylistFetcher.php';
 
 use GuzzleHttp\Client;
 
-$client = new Client();
-$accesstoken = accesstoken($client);
+$configLoader = new ConfigLoader();
+$configLoader->load();
+
+$dsn = $_ENV['DATABASE_DSN'];
+$databaseUser = $_ENV['DATABASE_USER'];
+$databasePassword = $_ENV['DATABASE_PASSWORD'];
 
 try {
-    $db = getDatabaseConnection();
+    $database = new DatabaseConnection($dsn, $databaseUser, $databasePassword);
+    $pdo = $database->getPdo();
 } catch (RuntimeException $e) {
     echo 'Fehler: '.$e->getMessage();
-    $db = null;
+
+    exit;
 }
 
+$spotifyRepository = new SpotifyRepository($database);
+$client = new Client();
+$spotifyApi = new SpotifyApi($client, $spotifyRepository);
+
+$accessToken = $spotifyRepository->getLatestAccessToken() ?? $spotifyApi->createAccesstoken();
+
 $headers = [
-    'Authorization' => 'Bearer '.$accesstoken,
+    'Authorization' => 'Bearer '.$accessToken,
 ];
 $offset = 0;
 
 $response = null;
 $artists = [];
 $trackitems = [];
-do {
-    $response = $client->request(
-        'GET',
-        'https://api.spotify.com/v1/playlists/'
-        .$_ENV['PLAYLIST_ID']
-        ."/tracks?offset={$offset}&limit=100",
-        [
-            'headers' => [
-                'Authorization' => 'Bearer '.$accesstoken,
-            ],
-        ]
-    );
 
-    $songs = json_decode($response->getBody()->__toString());
+$playlistFetcher = new SpotifyPlaylistFetcher($client, $accessToken);
 
-    $offset += 100;
+$data = $playlistFetcher->fetchTracks($_ENV['PLAYLIST_ID']);
 
-    foreach ($songs->items as $item) {
-        $trackitems[] = $item;
-        foreach ($item->track->artists as $artist) {
-            if (array_key_exists($artist->id, $artists) && array_key_exists('count', $artists[$artist->id])) {
-                ++$artists[$artist->id]['count'];
-                $artists[$artist->id]['name'] = $artist->name;
-            } else {
-                $artists[$artist->id] = [];
-                $artists[$artist->id]['name'] = $artist->name;
-                $artists[$artist->id]['count'] = 1;
-            }
-        }
-    }
-} while (0 === count($songs->items) || 99 <= count($songs->items)); // Delete first condition? Loop will be run >= 1 time anyway. Test with exactly 100 tracks!
+$artists = $data['artists'];
+$trackitems = $data['tracks'];
 
 uasort($artists, static fn ($a, $b) => $a['count'] < $b['count'] ? 1 : -1);
 
 foreach ($artists as $key => $artist) {
     echo $artist['name'].': '.$artist['count'];
     echo '<br/>';
-    $sql = 'INSERT INTO artists
-        (ID, name)
-        VALUES (?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name);';
-    $stmt = $db->prepare($sql);
-    $stmt->execute([$key, $artist['name']]);
+    $spotifyRepository->saveArtist($key, $artist);
 }
 
 echo "<table style='borderwidth: 2px borderstyle: solid'>\n";
