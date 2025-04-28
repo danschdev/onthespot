@@ -26,7 +26,8 @@ try {
     $pdo = $database->getPdo();
 } catch (RuntimeException $e) {
     echo 'Fehler: '.$e->getMessage();
-    $pdo = null;
+
+    exit;
 }
 
 $spotifyRepository = new SpotifyRepository($database);
