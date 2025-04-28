@@ -15,7 +15,13 @@ class SpotifyPlaylistFetcher
         $this->accessToken = $accessToken;
     }
 
-    public function fetchTracks(string $playlistId)
+    /**
+     * @return array{
+     *     tracks: list<mixed>,
+     *     artists: array<string, array{name: string, count: int}>
+     * }
+     */
+    public function fetchTracks(string $playlistId): array
     {
         $offset = 0;
         $data = ['artists' => [], 'tracks' => []];
