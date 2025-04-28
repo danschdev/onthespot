@@ -57,11 +57,7 @@ uasort($artists, static fn ($a, $b) => $a['count'] < $b['count'] ? 1 : -1);
 foreach ($artists as $key => $artist) {
     echo $artist['name'].': '.$artist['count'];
     echo '<br/>';
-    $sql = 'INSERT INTO artists
-        (ID, name)
-        VALUES (?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name);';
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$key, $artist['name']]);
+    $spotifyRepository->saveArtist($key, $artist);
 }
 
 echo "<table style='borderwidth: 2px borderstyle: solid'>\n";

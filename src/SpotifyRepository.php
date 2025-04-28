@@ -31,4 +31,14 @@ class SpotifyRepository
 
         return $stmt->fetchColumn() ?: null;
     }
+
+    /**
+     * @param array<mixed> $artist
+     */
+    public function saveArtist(string $key, array $artist): void
+    {
+        $stmt = $this->pdo->prepare('INSERT INTO artists (ID, name)
+        VALUES (:id, :name) ON DUPLICATE KEY UPDATE name = VALUES(name);');
+        $stmt->execute(['id' => $key, 'name' => $artist['name']]);
+    }
 }
