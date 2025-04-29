@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once 'DatabaseConnection.php';
 
-class SpotifyRepository
+class PdoSpotifyRepository
 {
     private PDO $pdo;
 

@@ -5,14 +5,14 @@ use GuzzleHttp\Client;
 
 require_once 'DatabaseConnection.php';
 
-require_once 'SpotifyRepository.php';
+require_once 'PdoSpotifyRepository.php';
 
 class SpotifyAuthenticator
 {
     private Client $client;
-    private ?SpotifyRepository $spotifyRepository;
+    private ?PdoSpotifyRepository $spotifyRepository;
 
-    public function __construct(Client $client, ?SpotifyRepository $spotifyRepository = null)
+    public function __construct(Client $client, ?PdoSpotifyRepository $spotifyRepository = null)
     {
         $this->client = $client;
         $this->spotifyRepository = $spotifyRepository;

@@ -30,7 +30,7 @@ try {
     exit;
 }
 
-$spotifyRepository = new SpotifyRepository($database);
+$spotifyRepository = new PdoSpotifyRepository($database);
 $client = new Client();
 $spotifyApi = new SpotifyAuthenticator($client, $spotifyRepository);
 
