@@ -8,7 +8,7 @@ require 'ConfigLoader.php';
 
 require 'DatabaseConnection.php';
 
-require 'SpotifyApi.php';
+require 'SpotifyAuthenticator.php';
 
 require 'SpotifyPlaylistFetcher.php';
 
@@ -32,7 +32,7 @@ try {
 
 $spotifyRepository = new SpotifyRepository($database);
 $client = new Client();
-$spotifyApi = new SpotifyApi($client, $spotifyRepository);
+$spotifyApi = new SpotifyAuthenticator($client, $spotifyRepository);
 
 $accessToken = $spotifyRepository->getLatestAccessToken() ?? $spotifyApi->createAccesstoken();
 

@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 require_once __DIR__.'/../DatabaseConnection.php';
 
-require_once __DIR__.'/../SpotifyApi.php';
+require_once __DIR__.'/../SpotifyAuthenticator.php';
 
 require_once __DIR__.'/../SpotifyPlaylistFetcher.php';
 
@@ -31,7 +31,7 @@ final class ConnectionTest extends TestCase
     public function testSpotifyApiToken(): void
     {
         $client = new Client();
-        $spotifyApi = new SpotifyApi($client);
+        $spotifyApi = new SpotifyAuthenticator($client);
         $token = $spotifyApi->createAccessToken();
         self::assertNotEmpty($token);
     }
@@ -42,7 +42,7 @@ final class ConnectionTest extends TestCase
         $dotenv->load();
 
         $client = new Client();
-        $spotifyApi = new SpotifyApi($client);
+        $spotifyApi = new SpotifyAuthenticator($client);
         $accessToken = $spotifyApi->createAccessToken();
         $playlistFetcher = new SpotifyPlaylistFetcher($client, $accessToken);
 

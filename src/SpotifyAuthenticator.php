@@ -7,7 +7,7 @@ require_once 'DatabaseConnection.php';
 
 require_once 'SpotifyRepository.php';
 
-class SpotifyApi
+class SpotifyAuthenticator
 {
     private Client $client;
     private ?SpotifyRepository $spotifyRepository;
