@@ -5,11 +5,11 @@ declare(strict_types=1);
 use GuzzleHttp\Client;
 use PHPUnit\Framework\TestCase;
 
-require_once __DIR__.'/../DatabaseConnection.php';
+require_once __DIR__.'/../database/DatabaseConnection.php';
 
-require_once __DIR__.'/../SpotifyAuthenticator.php';
+require_once __DIR__.'/../core/SpotifyAuthenticator.php';
 
-require_once __DIR__.'/../SpotifyPlaylistFetcher.php';
+require_once __DIR__.'/../core/SpotifyPlaylistFetcher.php';
 
 final class ConnectionTest extends TestCase
 {
@@ -38,7 +38,7 @@ final class ConnectionTest extends TestCase
 
     public function testSpotifyPlaylistFetcher(): void
     {
-        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'\..\..');
+        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'/../..');
         $dotenv->load();
 
         $client = new Client();

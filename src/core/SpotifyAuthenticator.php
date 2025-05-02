@@ -3,9 +3,9 @@
 declare(strict_types=1);
 use GuzzleHttp\Client;
 
-require_once 'DatabaseConnection.php';
+require_once __DIR__.'/../database/DatabaseConnection.php';
 
-require_once 'PdoSpotifyRepository.php';
+require_once __DIR__.'/../domain/PdoSpotifyRepository.php';
 
 class SpotifyAuthenticator
 {
@@ -20,7 +20,7 @@ class SpotifyAuthenticator
 
     public function createAccesstoken(): string
     {
-        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'\..');
+        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'/../../');
         $dotenv->load();
 
         $clientId = $_ENV['SPOTIFY_CLIENT_ID'];
