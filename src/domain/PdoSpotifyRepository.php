@@ -41,4 +41,11 @@ class PdoSpotifyRepository
         VALUES (:id, :name) ON DUPLICATE KEY UPDATE name = VALUES(name);');
         $stmt->execute(['id' => $key, 'name' => $artist['name']]);
     }
+
+    public function saveGenre(string $artistKey, string $genre): void
+    {
+        $stmt = $this->pdo->prepare('INSERT INTO genres (name)
+        VALUES (:name) EXCEPT SELECT name FROM genres WHERE name = :name;');
+        $stmt->execute(['name' => $genre]);
+    }
 }

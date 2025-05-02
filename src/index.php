@@ -60,6 +60,7 @@ foreach ($artists as $key => $artist) {
     echo 'Genres: <br/>';
     foreach ($artist['genres'] as $genre) {
         echo $genre.'</br>';
+        $spotifyRepository->saveGenre($key, $genre);
     }
     echo '<br/>';
     $spotifyRepository->saveArtist($key, $artist);
