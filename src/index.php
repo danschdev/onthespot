@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-require '../vendor/autoload.php';
+require __DIR__.'/../vendor/autoload.php';
 
-require 'ConfigLoader.php';
+require __DIR__.'/config/ConfigLoader.php';
 
-require 'DatabaseConnection.php';
+require __DIR__.'/database/DatabaseConnection.php';
 
-require 'SpotifyApi.php';
+require __DIR__.'/core/SpotifyAuthenticator.php';
 
-require 'SpotifyPlaylistFetcher.php';
+require __DIR__.'/core/SpotifyPlaylistFetcher.php';
 
 use GuzzleHttp\Client;
 
@@ -30,9 +30,9 @@ try {
     exit;
 }
 
-$spotifyRepository = new SpotifyRepository($database);
+$spotifyRepository = new PdoSpotifyRepository($database);
 $client = new Client();
-$spotifyApi = new SpotifyApi($client, $spotifyRepository);
+$spotifyApi = new SpotifyAuthenticator($client, $spotifyRepository);
 
 $accessToken = $spotifyRepository->getLatestAccessToken() ?? $spotifyApi->createAccesstoken();
 

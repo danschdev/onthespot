@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-require_once 'DatabaseConnection.php';
+require_once __DIR__.'/../database/DatabaseConnection.php';
 
-class SpotifyRepository
+class PdoSpotifyRepository
 {
     private PDO $pdo;
 
