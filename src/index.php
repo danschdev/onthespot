@@ -57,6 +57,11 @@ uasort($artists, static fn ($a, $b) => $a['count'] < $b['count'] ? 1 : -1);
 foreach ($artists as $key => $artist) {
     echo $artist['name'].': '.$artist['count'];
     echo '<br/>';
+    echo 'Genres: <br/>';
+    foreach ($artist['genres'] as $genre) {
+        echo $genre.'</br>';
+    }
+    echo '<br/>';
     $spotifyRepository->saveArtist($key, $artist);
 }
 

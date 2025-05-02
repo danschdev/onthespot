@@ -18,13 +18,13 @@ class SpotifyPlaylistFetcher
     /**
      * @return array{
      *     tracks: list<mixed>,
-     *     artists: array<string, array{name: string, count: int}>
+     *     artists: array<string, array{name: string, count: int, genres: array<string>}>
      * }
      */
     public function fetchTracks(string $playlistId): array
     {
         $offset = 0;
-        $data = ['artists' => [], 'tracks' => []];
+        $data = ['artists' => [], 'tracks' => [], 'genres' => []];
         do {
             $response = $this->client->request(
                 'GET',
@@ -49,14 +49,37 @@ class SpotifyPlaylistFetcher
                         ++$data['artists'][$artist->id]['count'];
                         $data['artists'][$artist->id]['name'] = $artist->name;
                     } else {
+                        $genres = $this->fetchGenres($artist->id);
                         $data['artists'][$artist->id] = [];
                         $data['artists'][$artist->id]['name'] = $artist->name;
                         $data['artists'][$artist->id]['count'] = 1;
+                        $data['artists'][$artist->id]['genres'] = $genres;
                     }
                 }
             }
         } while (0 === count($songs->items) || 99 <= count($songs->items)); // Delete first condition? Loop will be run >= 1 time anyway. Test with exactly 100 tracks!
 
         return $data;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function fetchGenres(string $artistId): array
+    {
+        $response = $this->client->request(
+            'GET',
+            'https://api.spotify.com/v1/artists/'
+            .$artistId,
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer '.$this->accessToken,
+                ],
+            ]
+        );
+
+        $artistData = json_decode($response->getBody()->__toString());
+
+        return $artistData->genres;
     }
 }
