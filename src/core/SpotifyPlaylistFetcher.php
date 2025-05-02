@@ -25,6 +25,7 @@ class SpotifyPlaylistFetcher
     {
         $offset = 0;
         $data = ['artists' => [], 'tracks' => [], 'genres' => []];
+        $artistIds = [];
         do {
             $response = $this->client->request(
                 'GET',
@@ -49,28 +50,38 @@ class SpotifyPlaylistFetcher
                         ++$data['artists'][$artist->id]['count'];
                         $data['artists'][$artist->id]['name'] = $artist->name;
                     } else {
-                        $genres = $this->fetchGenres($artist->id);
+                        $artistIds[] = $artist->id;
                         $data['artists'][$artist->id] = [];
                         $data['artists'][$artist->id]['name'] = $artist->name;
                         $data['artists'][$artist->id]['count'] = 1;
-                        $data['artists'][$artist->id]['genres'] = $genres;
+                    }
+                    if (20 === count($artistIds) || 99 <= count($songs->items)) {
+                        $data['genres'][] = $this->fetchGenres($artistIds, $data);
+                        $artistIds = [];
                     }
                 }
             }
         } while (0 === count($songs->items) || 99 <= count($songs->items)); // Delete first condition? Loop will be run >= 1 time anyway. Test with exactly 100 tracks!
+        print_r($data['artists']);
+        echo '<br/>';
 
         return $data;
     }
 
+    // TODO: Call this after whole playlist is there
     /**
+     * @param array<string> $artistIds
+     * @param mixed         &$data
+     *
      * @return array<string>
      */
-    public function fetchGenres(string $artistId): array
+    public function fetchGenres(array $artistIds, &$data): array
     {
+        $url = 'https://api.spotify.com/v1/artists?ids='
+        .implode(',', $artistIds);
         $response = $this->client->request(
             'GET',
-            'https://api.spotify.com/v1/artists/'
-            .$artistId,
+            $url,
             [
                 'headers' => [
                     'Authorization' => 'Bearer '.$this->accessToken,
@@ -79,7 +90,14 @@ class SpotifyPlaylistFetcher
         );
 
         $artistData = json_decode($response->getBody()->__toString());
+        $genres = [];
+        foreach ($artistData->artists as $artist) {
+            $data['artists'][$artist->id]['genres'] = $artist->genres;
+            foreach ($artist->genres as $genre) {
+                $genres[$genre] = $genre;
+            }
+        }
 
-        return $artistData->genres;
+        return $genres;
     }
 }
