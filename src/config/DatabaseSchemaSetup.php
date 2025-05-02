@@ -41,3 +41,13 @@ $sql = 'CREATE TABLE IF NOT EXISTS `spotify_tokens` (
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute([]);
+
+$sql = 'CREATE TABLE IF NOT EXISTS `genres` (
+    `id` int NOT NULL AUTO_INCREMENT,
+    name varchar(255) NOT NULL,
+    PRIMARY KEY (id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+';
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute([]);
