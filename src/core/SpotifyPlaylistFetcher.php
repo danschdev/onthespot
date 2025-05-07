@@ -55,7 +55,7 @@ class SpotifyPlaylistFetcher
                         $data['artists'][$artist->id]['name'] = $artist->name;
                         $data['artists'][$artist->id]['count'] = 1;
                     }
-                    if (20 === count($artistIds) || 99 <= count($songs->items)) {
+                    if (20 === count($artistIds) || (0 > count($artistIds) && 99 <= count($songs->items))) {
                         $data['genres'][] = $this->fetchGenres($artistIds, $data);
                         $artistIds = [];
                     }
