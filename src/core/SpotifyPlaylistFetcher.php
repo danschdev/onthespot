@@ -62,8 +62,9 @@ class SpotifyPlaylistFetcher
                 }
             }
         } while (0 === count($songs->items) || 99 <= count($songs->items)); // Delete first condition? Loop will be run >= 1 time anyway. Test with exactly 100 tracks!
-        print_r($data['artists']);
-        echo '<br/>';
+        if (count($artistIds) > 0) {
+            $data['genres'][] = $this->fetchGenres($artistIds, $data);
+        }
 
         return $data;
     }
