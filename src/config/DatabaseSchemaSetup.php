@@ -51,3 +51,14 @@ $sql = 'CREATE TABLE IF NOT EXISTS `genres` (
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute([]);
+
+$sql = 'CREATE TABLE IF NOT EXISTS `artist_genre` (
+  `artist_id` varchar(22) NOT NULL,
+  `genre_id` int NOT NULL,
+  PRIMARY KEY (`artist_id`, `genre_id`),
+  FOREIGN KEY (`artist_id`) REFERENCES `artists`(`ID`) ON DELETE CASCADE,
+  FOREIGN KEY (`genre_id`) REFERENCES `genres`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4';
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute([]);
