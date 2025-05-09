@@ -22,7 +22,8 @@ $configLoader->load();
 $dsn = $_ENV['DATABASE_DSN'];
 $databaseUser = $_ENV['DATABASE_USER'];
 $databasePassword = $_ENV['DATABASE_PASSWORD'];
-echo "Stelle Verbindung her:...";
+echo 'Stelle Verbindung her:...';
+
 try {
     $database = new DatabaseConnection($dsn, $databaseUser, $databasePassword);
     $pdo = $database->getPdo();
