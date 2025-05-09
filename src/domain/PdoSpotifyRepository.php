@@ -42,7 +42,7 @@ class PdoSpotifyRepository
         $stmt->execute(['id' => $key, 'name' => $artist['name']]);
     }
 
-    public function saveGenre(string $artistKey, string $genre): void
+    public function saveGenre(string $genre): void
     {
         $stmt = $this->pdo->prepare('INSERT INTO genres (name)
         VALUES (:name) EXCEPT SELECT name FROM genres WHERE name = :name;');
