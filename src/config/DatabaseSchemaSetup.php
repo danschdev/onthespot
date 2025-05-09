@@ -46,7 +46,8 @@ $stmt->execute([]);
 $sql = 'CREATE TABLE IF NOT EXISTS `genres` (
     `id` int NOT NULL AUTO_INCREMENT,
     name varchar(255) NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (`id`),
+    UNIQUE (`name`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_german2_ci;
 ';
 
