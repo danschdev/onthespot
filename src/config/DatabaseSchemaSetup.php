@@ -12,6 +12,7 @@ $dotenv->load();
 $dsn = $_ENV['DATABASE_DSN'];
 $databaseUser = $_ENV['DATABASE_USER'];
 $databasePassword = $_ENV['DATABASE_PASSWORD'];
+$databaseName = 'onthespot';
 
 try {
     $database = new DatabaseConnection($dsn, $databaseUser, $databasePassword);
@@ -20,6 +21,15 @@ try {
     echo 'Fehler: '.$e->getMessage();
     $pdo = null;
 }
+
+// Datenbank anlegen, falls sie noch nicht existiert
+$createDatabaseSql = "CREATE DATABASE IF NOT EXISTS `{$databaseName}`
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_german2_ci;";
+$pdo->exec($createDatabaseSql);
+
+// In die neue DB wechseln
+$pdo->exec("USE `{$databaseName}`;");
 
 $sql = 'CREATE TABLE IF NOT EXISTS `artists` (
   `ID` varchar(22) NOT NULL,
