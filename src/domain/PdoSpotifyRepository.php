@@ -41,4 +41,25 @@ class PdoSpotifyRepository
         VALUES (:id, :name) ON DUPLICATE KEY UPDATE name = VALUES(name);');
         $stmt->execute(['id' => $key, 'name' => $artist['name']]);
     }
+
+    public function saveGenre(string $genre): void
+    {
+        $stmt = $this->pdo->prepare('INSERT IGNORE INTO genres (name)
+        VALUES (:name)');
+        $stmt->execute(['name' => $genre]);
+    }
+
+    public function saveArtistGenre(string $artistKey, string $genre): void
+    {
+        $stmt = $this->pdo->prepare('SELECT id FROM genres WHERE name = :name');
+        $stmt->execute(['name' => $genre]);
+        $genreId = $stmt->fetchColumn();
+
+        if (false === $genreId) {
+            throw new RuntimeException("Genre '{$genre}' not found in genres table.");
+        }
+        $stmt = $this->pdo->prepare('INSERT IGNORE INTO artist_genre (artist_id, genre_id)
+        VALUES (:artist_id, :genre_id)');
+        $stmt->execute(['artist_id' => $artistKey, 'genre_id' => $genreId]);
+    }
 }
