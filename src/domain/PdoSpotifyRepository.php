@@ -44,8 +44,8 @@ class PdoSpotifyRepository
 
     public function saveGenre(string $genre): void
     {
-        $stmt = $this->pdo->prepare('INSERT INTO genres (name)
-        VALUES (:name) EXCEPT SELECT name FROM genres WHERE name = :name;');
+        $stmt = $this->pdo->prepare('INSERT IGNORE INTO genres (name)
+        VALUES (:name)');
         $stmt->execute(['name' => $genre]);
     }
 }
