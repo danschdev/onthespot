@@ -11,6 +11,8 @@ class PdoSpotifyRepository
     public function __construct(DatabaseConnection $databaseConnection)
     {
         $this->pdo = $databaseConnection->getPdo();
+        $databaseName = 'onthespot';
+        $this->pdo->exec("USE `$databaseName`;");
     }
 
     public function saveAccessToken(string $accessToken, DateTime $expiresAt): void
