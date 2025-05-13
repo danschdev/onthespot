@@ -5,7 +5,7 @@ class ConfigLoader
 {
     public static function load(): void
     {
-        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'\..\..');
+        $dotenv = Dotenv\Dotenv::createImmutable(realpath(__DIR__.'/../../'));
         $dotenv->load();
     }
 }

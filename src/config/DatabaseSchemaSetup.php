@@ -6,7 +6,7 @@ require __DIR__.'/../database/DatabaseConnection.php';
 
 require __DIR__.'/../../vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'\..\..');
+$dotenv = Dotenv\Dotenv::createImmutable(realpath(__DIR__.'/../../'));
 $dotenv->load();
 
 $dsn = $_ENV['DATABASE_DSN'];
