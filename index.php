@@ -53,15 +53,8 @@ $artists = $data['artists'];
 $trackitems = $data['tracks'];
 $genres = [];
 
-uasort($artists, static fn ($a, $b) => $a['count'] < $b['count'] ? 1 : -1);
-
 foreach ($artists as $key => $artist) {
-    echo $artist['name'].': '.$artist['count'];
-    echo '<br/>';
-    echo 'Genres: <br/>';
     foreach ($artist['genres'] as $genre) {
-        echo $genre.'</br>';
-
         if (array_key_exists($genre, $genres)) {
             $genres[$genre][] = $artist;
         } else {
@@ -70,16 +63,20 @@ foreach ($artists as $key => $artist) {
         $spotifyRepository->saveGenre($genre);
         $spotifyRepository->saveArtistGenre($key, $genre);
     }
-    echo '<br/>';
     $spotifyRepository->saveArtist($key, $artist);
 }
 
 uasort($genres, static fn ($a, $b) => sizeof($a) < sizeof($b) ? 1 : -1);
 
 foreach($genres as $genre => $genreartists) {
-    echo '<b>'.$genre.'</b>: '.sizeof($genreartists).'<br/>';
+    $paragraph = '';
+    $genresongcount = 0;
     foreach($genreartists as $artist) {
-        echo $artist['name'].'</br>';
+        $paragraph .= $artist['name'].': '.$artist['count'].' Songs</br>';
+// Hier werden Songs doppelt für das Genre gezählt!
+        $genresongcount += $artist['count'];
     }
-    echo '<br/>';
+    $paragraph = '<b>'.$genre.'</b>: '.sizeof($genreartists).' Künstler, '.$genresongcount.' Songs<br/>'
+    .$paragraph.'<br/>';
+    echo $paragraph;
 }
