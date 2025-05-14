@@ -2,19 +2,17 @@
 
 declare(strict_types=1);
 
-require __DIR__.'/../vendor/autoload.php';
+require __DIR__.'/vendor/autoload.php';
 
-require __DIR__.'/config/ConfigLoader.php';
+require __DIR__.'/src/config/ConfigLoader.php';
 
-require __DIR__.'/database/DatabaseConnection.php';
+require __DIR__.'/src/database/DatabaseConnection.php';
 
-require __DIR__.'/core/SpotifyAuthenticator.php';
+require __DIR__.'/src/core/SpotifyAuthenticator.php';
 
-require __DIR__.'/core/SpotifyPlaylistFetcher.php';
+require __DIR__.'/src/core/SpotifyPlaylistFetcher.php';
 
 use GuzzleHttp\Client;
-
-// phpinfo();
 
 $configLoader = new ConfigLoader();
 $configLoader->load();
@@ -63,6 +61,7 @@ foreach ($artists as $key => $artist) {
     echo 'Genres: <br/>';
     foreach ($artist['genres'] as $genre) {
         echo $genre.'</br>';
+
         if (array_key_exists($genre, $genres)) {
             $genres[$genre][] = $artist;
         } else {
