@@ -53,39 +53,26 @@ $artists = $data['artists'];
 $trackitems = $data['tracks'];
 $genres = [];
 
-// for debugging purposes (duplicate genre count)
-
-echo "<table style='borderwidth: 2px; borderstyle: solid; width: 100%'>\n";
-echo "<tr>
-<th>Song</th>
-<th>Künstler</th>
-<th></th>
-<th>Album</th>
-<th>Weitere Künstler</th>
-</tr>";
+$playlistGenres = [];
 foreach ($trackitems as $item) {
-    echo '<tr>';
-    echo '<td>';
-    if ($item->track->explicit) {
-        echo '&#x26A0; ';
+    $songGenres = [];
+
+    foreach ($item->track->artists as $trackArtist) {
+        $artist = $artists[$trackArtist->id];
+        foreach ($artist['genres'] as $genre) {
+            if (!array_key_exists($songGenre, $genres)) {
+                $songGenres[$genre] = $genre;
+            }
+        }
     }
-    echo $item->track->name;
-    echo '</td>';
-    echo '<td>';
-    echo $item->track->artists[0]->name;
-    echo '</td>';
-    echo "<td><img src='";
-    echo $item->track->album->images[2]->url;
-    echo "'></td>";
-    echo '<td>';
-    echo $item->track->album->name;
-    echo '</td>';
-    foreach (array_slice($item->track->artists, 1) as $artist) {
-        echo "<td>{$artist->name}</td>";
+
+    foreach($songGenres as $genre) {
+        if (!array_key_exists($genre, $playlistGenres)) {
+            $playlistGenres[$genre] = 0;
+        } 
+        $playlistGenres[$genre] += 1;
     }
-    echo "</tr>\n";
 }
-echo '</table>';
 
 foreach ($artists as $key => $artist) {
     foreach ($artist['genres'] as $genre) {
@@ -100,17 +87,11 @@ foreach ($artists as $key => $artist) {
     $spotifyRepository->saveArtist($key, $artist);
 }
 
-uasort($genres, static fn ($a, $b) => sizeof($a) < sizeof($b) ? 1 : -1);
+uasort($playlistGenres, static fn ($a, $b) => $a > $b ? 1 : -1);
 
-foreach($genres as $genre => $genreartists) {
-    $paragraph = '';
-    $genresongcount = 0;
-    foreach($genreartists as $artist) {
-        $paragraph .= $artist['name'].': '.$artist['count'].' Songs</br>';
-// Hier werden Songs doppelt für das Genre gezählt!
-        $genresongcount += $artist['count'];
-    }
-    $paragraph = '<b>'.$genre.'</b>: '.sizeof($genreartists).' Künstler, '.$genresongcount.' Songs<br/>'
+foreach($playlistGenres as $genre => $genreSongCount) {
+      $paragraph = '<b>'.$genre.'</b>: '.$genreSongCount.' Songs<br/>'
     .$paragraph.'<br/>';
-    echo $paragraph;
 }
+echo $paragraph;
+  
