@@ -23,14 +23,14 @@ try {
 
 $databaseName = 'onthespot';
 
-$createDatabaseSql = "CREATE DATABASE IF NOT EXISTS `$databaseName` 
-    CHARACTER SET utf8mb4 
+$createDatabaseSql = "CREATE DATABASE IF NOT EXISTS `{$databaseName}`
+    CHARACTER SET utf8mb4
     COLLATE utf8mb4_german2_ci;";
 
 $pdo->exec($createDatabaseSql);
 
 // Danach sicherstellen, dass du die neue Datenbank benutzt:
-$pdo->exec("USE `$databaseName`;");
+$pdo->exec("USE `{$databaseName}`;");
 
 $sql = 'CREATE TABLE IF NOT EXISTS `artists` (
   `id` varchar(22) NOT NULL,

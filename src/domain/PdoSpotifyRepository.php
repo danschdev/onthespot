@@ -12,7 +12,7 @@ class PdoSpotifyRepository
     {
         $this->pdo = $databaseConnection->getPdo();
         $databaseName = 'onthespot';
-        $this->pdo->exec("USE `$databaseName`;");
+        $this->pdo->exec("USE `{$databaseName}`;");
     }
 
     public function saveAccessToken(string $accessToken, DateTime $expiresAt): void
