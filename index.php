@@ -54,23 +54,25 @@ $trackitems = $data['tracks'];
 $genres = [];
 
 $playlistGenres = [];
+$structuredTracks = [];
+$artistCount = [];
+
 foreach ($trackitems as $item) {
     $songGenres = [];
-
     foreach ($item->track->artists as $trackArtist) {
-        $artist = $artists[$trackArtist->id];
-        foreach ($artist['genres'] as $genre) {
-            if (!array_key_exists($songGenre, $genres)) {
-                $songGenres[$genre] = $genre;
-            }
-        }
-    }
+        $artistId = $trackArtist->id;
+        $artistName = $trackArtist->name;
 
-    foreach($songGenres as $genre) {
-        if (!array_key_exists($genre, $playlistGenres)) {
-            $playlistGenres[$genre] = 0;
-        } 
-        $playlistGenres[$genre] += 1;
+        $structuredTracks[$item->track->id]['artists'][$artistId]= $artistName;
+        
+        if (!isset($artistCount[$artistId])) {
+            $artistCount[$artistId] = [
+                'name' => $artistName,
+                'count' => 1
+            ];
+        } else {
+            $artistCount[$artistId]['count']++;
+        }
     }
 }
 
@@ -87,11 +89,39 @@ foreach ($artists as $key => $artist) {
     $spotifyRepository->saveArtist($key, $artist);
 }
 
+foreach($genres as $genre => $genreArtists) {
+    echo "<br/>";
+    echo "<h2>$genre</h2>";
+    echo "<ul>";
+    foreach ($genreArtists as $artist) {
+        echo "<li>".$artist["name"].": ".$artist["count"]."</li>";
+    }
+    echo "</ul>";
+}
+/*
 uasort($playlistGenres, static fn ($a, $b) => $a > $b ? 1 : -1);
 
-foreach($playlistGenres as $genre => $genreSongCount) {
-      $paragraph = '<b>'.$genre.'</b>: '.$genreSongCount.' Songs<br/>'
+
+      print_r($playlistGenres);
+      */
+ /*
+$paragraph = '<br/>';
+print_r($playlistGenres);
+foreach($playlistGenres as $genreName => $genre ) {
+    $paragraph = '<b>'.$genreName.'</b>: '.$genre['count'].' Songs<br/>'
     .$paragraph.'<br/>';
+//    $genreArtists = array_filter($artists, function($a) {
+//       return array_key_exists($genre, $artist['genres']);
+//    });
+    foreach ($genreSongCount as $sc) {
+        var_dump($sc);
+    }
+//    var_dump($genreSongCount);
+    echo $paragraph;
 }
-echo $paragraph;
   
+*/
+
+foreach($playlistGenres as $genre) {
+    echo $genre . '<br/>';
+}
