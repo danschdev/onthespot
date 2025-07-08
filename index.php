@@ -83,6 +83,19 @@ foreach ($artists as $key => $artist) {
         } else {
             $genres[$genre] = [$artist];
         }
+        $artistTrackItems = array_filter($trackitems, function($item) use ($key) {
+            foreach($item->track->artists as $trackArtist) {
+                if ($trackArtist->id === $key) {
+                    return true;
+                }
+            }
+            return false;
+        });
+        var_dump($artist["name"]);
+        foreach($artistTrackItems as $ati) {
+            var_dump($ati->track->name);
+        }
+        echo "<br/><br/>";
         $spotifyRepository->saveGenre($genre);
         $spotifyRepository->saveArtistGenre($key, $genre);
     }
