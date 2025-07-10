@@ -79,9 +79,9 @@ foreach ($trackitems as $item) {
 foreach ($artists as $key => $artist) {
     foreach ($artist['genres'] as $genre) {
         if (array_key_exists($genre, $genres)) {
-            $genres[$genre][] = $artist;
+            $genres[$genre]['artists'][] = $artist;
         } else {
-            $genres[$genre] = [$artist];
+            $genres[$genre]['artists'] = [$artist];
         }
         $artistTrackItems = array_filter($trackitems, function($item) use ($key) {
             foreach($item->track->artists as $trackArtist) {
@@ -91,9 +91,12 @@ foreach ($artists as $key => $artist) {
             }
             return false;
         });
-        var_dump($artist["name"]);
+        echo "<br/><br/>";
+        echo "<h1>".$genre."</h1>";
         foreach($artistTrackItems as $ati) {
             var_dump($ati->track->name);
+            echo($ati->track->id);
+            $genres[$genre]["tracks"][$ati->track->id] = $ati->track->name;
         }
         echo "<br/><br/>";
         $spotifyRepository->saveGenre($genre);
@@ -101,13 +104,17 @@ foreach ($artists as $key => $artist) {
     }
     $spotifyRepository->saveArtist($key, $artist);
 }
-
-foreach($genres as $genre => $genreArtists) {
+print_r($genres);
+foreach($genres as $name => $genre) {
     echo "<br/>";
-    echo "<h2>$genre</h2>";
+    echo "<h2>".$name.": ".sizeof($genre["tracks"])." Tracks, ".sizeof($genre["artists"])." Artists</h2>";
     echo "<ul>";
-    foreach ($genreArtists as $artist) {
+    foreach ($genre["artists"] as $artist) {
+        echo "<br/>";
         echo "<li>".$artist["name"].": ".$artist["count"]."</li>";
+    }
+    foreach ($genre["tracks"] as $trackItem) {
+        var_dump($trackItem);
     }
     echo "</ul>";
 }
