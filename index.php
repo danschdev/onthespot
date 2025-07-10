@@ -108,12 +108,10 @@ foreach($genres as $name => $genre) {
     echo "<br/>";
     echo "<h2>".$name.": ".sizeof($genre["tracks"])." Tracks, ".sizeof($genre["artists"])." Artists</h2>";
     echo "<ul>";
+    uasort($genre["artists"], static fn ($a, $b) => sizeof($a["count"]) > sizeof($b["count"]) ? -1 : 1);
     foreach ($genre["artists"] as $artist) {
         echo "<br/>";
         echo "<li>".$artist["name"].": ".$artist["count"]."</li>";
     }
-    foreach ($genre["tracks"] as $trackItem) {
-        var_dump($trackItem);
-    }
-    echo "</ul>";
+   echo "</ul>";
 }
