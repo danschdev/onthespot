@@ -91,20 +91,16 @@ foreach ($artists as $key => $artist) {
             }
             return false;
         });
-        echo "<br/><br/>";
-        echo "<h1>".$genre."</h1>";
+
         foreach($artistTrackItems as $ati) {
-            var_dump($ati->track->name);
-            echo($ati->track->id);
             $genres[$genre]["tracks"][$ati->track->id] = $ati->track->name;
         }
-        echo "<br/><br/>";
+
         $spotifyRepository->saveGenre($genre);
         $spotifyRepository->saveArtistGenre($key, $genre);
     }
     $spotifyRepository->saveArtist($key, $artist);
 }
-print_r($genres);
 
 uasort($genres, static fn ($a, $b) => sizeof($a["tracks"]) > sizeof($b["tracks"]) ? -1 : 1);
 
@@ -120,26 +116,4 @@ foreach($genres as $name => $genre) {
         var_dump($trackItem);
     }
     echo "</ul>";
-}
-
- /*
-$paragraph = '<br/>';
-print_r($playlistGenres);
-foreach($playlistGenres as $genreName => $genre ) {
-    $paragraph = '<b>'.$genreName.'</b>: '.$genre['count'].' Songs<br/>'
-    .$paragraph.'<br/>';
-//    $genreArtists = array_filter($artists, function($a) {
-//       return array_key_exists($genre, $artist['genres']);
-//    });
-    foreach ($genreSongCount as $sc) {
-        var_dump($sc);
-    }
-//    var_dump($genreSongCount);
-    echo $paragraph;
-}
-  
-*/
-
-foreach($playlistGenres as $genre) {
-    echo $genre . '<br/>';
 }
