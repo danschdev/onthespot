@@ -105,6 +105,9 @@ foreach ($artists as $key => $artist) {
     $spotifyRepository->saveArtist($key, $artist);
 }
 print_r($genres);
+
+uasort($genres, static fn ($a, $b) => sizeof($a["tracks"]) > sizeof($b["tracks"]) ? -1 : 1);
+
 foreach($genres as $name => $genre) {
     echo "<br/>";
     echo "<h2>".$name.": ".sizeof($genre["tracks"])." Tracks, ".sizeof($genre["artists"])." Artists</h2>";
@@ -118,12 +121,7 @@ foreach($genres as $name => $genre) {
     }
     echo "</ul>";
 }
-/*
-uasort($playlistGenres, static fn ($a, $b) => $a > $b ? 1 : -1);
 
-
-      print_r($playlistGenres);
-      */
  /*
 $paragraph = '<br/>';
 print_r($playlistGenres);
