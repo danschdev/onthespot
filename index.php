@@ -58,7 +58,6 @@ $structuredTracks = [];
 $artistCount = [];
 
 foreach ($trackitems as $item) {
-    $songGenres = [];
     foreach ($item->track->artists as $trackArtist) {
         $artistId = $trackArtist->id;
         $artistName = $trackArtist->name;
@@ -106,7 +105,7 @@ uasort($genres, static fn ($a, $b) => sizeof($b["tracks"]) <=> sizeof($a["tracks
 
 foreach($genres as $name => $genre) {
     echo "<br/>";
-    echo "<h2>".$name.": ".sizeof($genre["tracks"])." Tracks, ".sizeof($genre["artists"])." Artists</h2>";
+    echo "<h2>".ucwords($name).": ".sizeof($genre["tracks"])." Tracks, ".sizeof($genre["artists"])." Artists</h2>";
     echo "<ul>";
     uasort($genre["artists"], static fn ($a, $b) => $b["count"] <=> $a["count"]);
     foreach ($genre["artists"] as $artist) {
