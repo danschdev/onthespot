@@ -51,43 +51,66 @@ $data = $playlistFetcher->fetchTracks($_ENV['PLAYLIST_ID']);
 
 $artists = $data['artists'];
 $trackitems = $data['tracks'];
+$genres = [];
 
-uasort($artists, static fn ($a, $b) => $a['count'] < $b['count'] ? 1 : -1);
+$playlistGenres = [];
+$structuredTracks = [];
+$artistCount = [];
+
+foreach ($trackitems as $item) {
+    foreach ($item->track->artists as $trackArtist) {
+        $artistId = $trackArtist->id;
+        $artistName = $trackArtist->name;
+
+        $structuredTracks[$item->track->id]['artists'][$artistId]= $artistName;
+        
+        if (!isset($artistCount[$artistId])) {
+            $artistCount[$artistId] = [
+                'name' => $artistName,
+                'count' => 1
+            ];
+        } else {
+            $artistCount[$artistId]['count']++;
+        }
+    }
+}
 
 foreach ($artists as $key => $artist) {
-    echo $artist['name'].': '.$artist['count'];
-    echo '<br/>';
-    echo 'Genres: <br/>';
     foreach ($artist['genres'] as $genre) {
-        echo $genre.'</br>';
+        if (array_key_exists($genre, $genres)) {
+            $genres[$genre]['artists'][] = $artist;
+        } else {
+            $genres[$genre]['artists'] = [$artist];
+        }
+        $artistTrackItems = array_filter($trackitems, function($item) use ($key) {
+            foreach($item->track->artists as $trackArtist) {
+                if ($trackArtist->id === $key) {
+                    return true;
+                }
+            }
+            return false;
+        });
+
+        foreach($artistTrackItems as $ati) {
+            $genres[$genre]["tracks"][$ati->track->id] = $ati->track->name;
+        }
+
         $spotifyRepository->saveGenre($genre);
         $spotifyRepository->saveArtistGenre($key, $genre);
     }
-    echo '<br/>';
     $spotifyRepository->saveArtist($key, $artist);
 }
 
-echo "<table style='borderwidth: 2px borderstyle: solid'>\n";
-foreach ($trackitems as $item) {
-    echo '<tr>';
-    echo '<td>';
-    if ($item->track->explicit) {
-        echo '&#x26A0; ';
+uasort($genres, static fn ($a, $b) => sizeof($b["tracks"]) <=> sizeof($a["tracks"]));
+
+foreach($genres as $name => $genre) {
+    echo "<br/>";
+    echo "<h2>".ucwords($name).": ".sizeof($genre["tracks"])." Tracks, ".sizeof($genre["artists"])." Artists</h2>";
+    echo "<ul>";
+    uasort($genre["artists"], static fn ($a, $b) => $b["count"] <=> $a["count"]);
+    foreach ($genre["artists"] as $artist) {
+        echo "<br/>";
+        echo "<li>".$artist["name"].": ".$artist["count"]."</li>";
     }
-    echo $item->track->name;
-    echo '</td>';
-    echo '<td>';
-    echo $item->track->artists[0]->name;
-    echo '</td>';
-    echo "<td><img src='";
-    echo $item->track->album->images[2]->url;
-    echo "'></td>";
-    echo '<td>';
-    echo $item->track->album->name;
-    echo '</td>';
-    foreach (array_slice($item->track->artists, 1) as $artist) {
-        echo "<td>{$artist->name}</td>";
-    }
-    echo "</tr>\n";
+   echo "</ul>";
 }
-echo '</table>';
