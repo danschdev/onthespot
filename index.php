@@ -102,13 +102,13 @@ foreach ($artists as $key => $artist) {
     $spotifyRepository->saveArtist($key, $artist);
 }
 
-uasort($genres, static fn ($a, $b) => sizeof($a["tracks"]) > sizeof($b["tracks"]) ? -1 : 1);
+uasort($genres, static fn ($a, $b) => sizeof($b["tracks"]) <=> sizeof($a["tracks"]));
 
 foreach($genres as $name => $genre) {
     echo "<br/>";
     echo "<h2>".$name.": ".sizeof($genre["tracks"])." Tracks, ".sizeof($genre["artists"])." Artists</h2>";
     echo "<ul>";
-    uasort($genre["artists"], static fn ($a, $b) => sizeof($a["count"]) > sizeof($b["count"]) ? -1 : 1);
+    uasort($genre["artists"], static fn ($a, $b) => $b["count"] <=> $a["count"]);
     foreach ($genre["artists"] as $artist) {
         echo "<br/>";
         echo "<li>".$artist["name"].": ".$artist["count"]."</li>";
