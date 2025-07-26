@@ -64,4 +64,14 @@ $response = file_get_contents('https://api.spotify.com/v1/me', false, stream_con
     ],
 ]));
 
-print_r($response);
+$userData = json_decode($response, true);
+
+print_r($userData);
+echo $userData['name'];
+
+echo '<br/><br/>';
+echo '<img src="';
+
+echo $userData['images'][0]['url'];
+
+echo '">';
