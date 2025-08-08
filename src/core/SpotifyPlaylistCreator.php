@@ -14,4 +14,29 @@ class SpotifyPlaylistCreator
         $this->client = $client;
         $this->accessToken = $accessToken;
     }
+
+    public function createPlaylist(string $name, string $description, bool $public = false, string $userId = ''): array
+    {
+        if (empty($userId)) {
+            throw new InvalidArgumentException('User ID cannot be empty.');
+        }
+
+        $response = $this->client->request(
+            'POST',
+            "https://api.spotify.com/v1/users/{$userId}/playlists",
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer '.$this->accessToken,
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => [
+                    'name' => $name,
+                    'description' => $description,
+                    'public' => $public,
+                ],
+            ]
+        );
+
+        return json_decode($response->getBody()->__toString(), true);
+    }
 }

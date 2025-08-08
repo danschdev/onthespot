@@ -17,14 +17,15 @@ final class PlaylistCRUDTest extends TestCase
 
         $client = new Client();
         $spotifyApi = new SpotifyAuthenticator($client);
-        $accessToken = $spotifyApi->createAccessToken();
-        $spotifyPlaylistCreator = new SpotifyPlaylistCreator($client, $accessToken);
+        $token = $spotifyApi->createAccessToken();
+        $userId = $_ENV['SPOTIFY_USER_ID'];
+        $spotifyPlaylistCreator = new SpotifyPlaylistCreator($client, $userId);
 
         $playlistName = 'Test Playlist';
         $description = 'This is a test playlist created for unit testing.';
         $public = false;
 
-        $response = $spotifyApi->createPlaylist($playlistName, $description, $public, $accessToken);
+        $response = $spotifyPlaylistCreator->createPlaylist($playlistName, $description, $public, $userId);
 
         self::assertArrayHasKey('id', $response);
         self::assertSame($playlistName, $response['name']);
