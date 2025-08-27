@@ -11,8 +11,7 @@ $configLoader->load();
 
 $clientId = $_ENV['SPOTIFY_CLIENT_ID'];
 $redirectUri = 'http://192.168.160.128/onthespot/src/user/callback.php';
-$scope = 'user-read-private user-read-email user-top-read playlist-read-private';
-//TODO: Add more scopes as needed - for creating playlists, etc.
+$scope = 'user-read-private user-read-email user-top-read playlist-read-private playlist-modify-private playlist-modify-public';
 
 $url = 'https://accounts.spotify.com/authorize?'.http_build_query([
     'response_type' => 'code',
