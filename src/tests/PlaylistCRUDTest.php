@@ -19,7 +19,7 @@ final class PlaylistCRUDTest extends TestCase
         $spotifyApi = new SpotifyAuthenticator($client);
         $token = $spotifyApi->createAccessToken();
         $userId = $_ENV['SPOTIFY_USER_ID'];
-        $spotifyPlaylistCreator = new SpotifyPlaylistCreator($client, $userId);
+        $spotifyPlaylistCreator = new SpotifyPlaylistCreator($client, $token);
 
         $playlistName = 'Test Playlist';
         $description = 'This is a test playlist created for unit testing.';
